@@ -1,11 +1,7 @@
-# Cloud-fraction-retrieval
-Retrieve cloud fraction within CrIS FOVs
+# Cloud-fraction-retrieval: Retrieve cloud fraction within CrIS FOVs
 This project contains two programs including one model training program: cris_cloud_fraction_dnn_training.py, and one prediction program: cris_cloud_fraction_dnn_prediction.py. The detailed description of the two programs are as follows:
-1. cris_cloud_fraction_dnn_training.py:
-# Author: Qian Liu - George Masion University
-# Email: qliu6@gmu.edu
-
-The following codesimport common libs
+# 1. cris_cloud_fraction_dnn_training.py:
+## The following codesimport common libs
 import os, sys
 import numpy as np
 import h5py
@@ -13,7 +9,7 @@ from scipy import io as scipyIO
 from netCDF4 import Dataset
 from sklearn.metrics import mean_squared_error
 import scipy.stats as st
-# import keras libs
+## Import keras libs
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
@@ -23,18 +19,17 @@ from keras.utils import np_utils
 from keras.wrappers.scikit_learn import KerasClassifier
 from keras.wrappers.scikit_learn import KerasRegressor
 from keras.callbacks import ModelCheckpoint
-# Custom activation function
+## Custom activation function
 from keras.layers import Activation
 from keras import backend as K
 from keras.utils.generic_utils import get_custom_objects
 import tensorflow as tf
-# import sklearn libs
+## Import sklearn libs
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from shutil import copyfile
 import matplotlib.pyplot as plt
-
-# [0-1]
+## Define activation function
 def custom_activation(x):
     return tf.minimum(tf.maximum(x, 0.0), 1.0)
 class ReLU01(Activation):
@@ -42,25 +37,22 @@ class ReLU01(Activation):
         super(ReLU01, self).__init__(activation, **kwargs)
         self.__name__ = 'relu01'
 def relu01(x):
-    # Your activation function specialties here
     return tf.minimum(tf.maximum(x, 0.0), 1.0)
 
-# # # #  # # # # # # # # # # # # # # # # # # # #  # # # # #
-# # # #  ###### using Keras  ######  # # # # 
-# # # #  # # # # # # # # # # # # # # # # # # # #  # # # # # 
-# main functions
+# 2. main functions
 if __name__ == '__main__':
-    #get_custom_objects().update({'relu1': Activation(custom_activation)})
+    
     get_custom_objects().update({'relu01': ReLU01(relu01)})  
-    # input 
+ ## Define input and output path
     data_TRAINING_file = './cloudfrac_200PC_Training_ge4.sav' 
     model_name  = 'cloudfrac'
     output_dir = './cloudfrac/64_128_32'
+ ## Define coefficinets such as total epoch number, learning rate, etc
     t_npc = 1   
     t_nep = 100
     save_every_coef_flag   = 1
     set_custom_lr = 1
-    cus_lr = 0.001 #0.0000078125 #0.000015625 #0.00003125 #0.0000625 #0.000125 #0.00025 #0.0005 #0.001
+    cus_lr = 0.001
 
     for ipc in range(t_npc):
         npc = 77
@@ -70,21 +62,20 @@ if __name__ == '__main__':
         stat_file = os.path.join(model_dir, 'training_stat.txt')
         timer_file = os.path.join(model_dir, 'timer.txt')
                             
-    # <I>. DATA PREPARATION 
-    #{
-        # load dataset
+  ## Data preparation and loading
+
         data = scipyIO.readsav(data_TRAINING_file)
         x_train = np.array(data['predictors'][:,0:npc]).astype(np.float)
         predictand_name = model_name
         y_train = np.array(data[predictand_name]).astype(np.float)
-    #}
+   
 
-    # <II>. Tranning=0, evaluating=1, predicting=2
-    #{
+  ### code for training, evaluation and prediction are: Tranning=0, evaluating=1, predicting=2
+    
         keras_all_in_one_file = os.path.join(model_dir, model_name+ '_pc_' + str(npc) +'.h5') 
         seed = 6
         np.random.seed(seed)
-        # create training and testing data
+  ## Create training and testing data
         x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size=0.3, random_state=seed)
         for i_epoch in range(t_nep):
             if os.path.exists(timer_file):
@@ -96,7 +87,7 @@ if __name__ == '__main__':
                 tot_epochs = 1
             print('Epoch %i/%i/%i'% (i_epoch+1, t_nep, tot_epochs))
             print('Build model ...')      
-            # build model file from already trained file
+   ## build model file from already trained file
             if os.path.exists(keras_all_in_one_file):
                 print('Updating coef file: ' )
                 print(' ' + keras_all_in_one_file)
@@ -110,11 +101,11 @@ if __name__ == '__main__':
                 print('Creating new coef file: ' )
                 print(' ' + keras_all_in_one_file)
                 loss_str = 'mean_squared_error' 
-                # optimizer 
-                optimizer_str = 'adam'  # 'rmsprop'
-                # define kerasClassifier model
+   ## Define optimizer 
+                optimizer_str = 'adam'  
+   ## define kerasClassifier model
                 def generate_kerasRregressor_model():
-                    # create model
+   ## create model
                     model = Sequential()
                     model.add(Dense(units=64, input_dim=x_train.shape[1], init='normal', activation='relu'))  # input layer
                     model.add(Dropout(0.05))
@@ -123,7 +114,7 @@ if __name__ == '__main__':
                     model.add(Dense(units=32, init='normal', activation='relu'))
                     model.add(Dropout(0.05))
                     model.add(Dense(units=1, init='normal', activation='relu'))
-                    # Compile model
+   ## Compile model
                     if set_custom_lr:
                         adam_opt = Adam(learning_rate=cus_lr)
                         model.compile(loss=loss_str, optimizer=adam_opt, metrics=['accuracy'])
@@ -131,7 +122,7 @@ if __name__ == '__main__':
                         model.compile(loss=loss_str, optimizer=optimizer_str, metrics=['accuracy'])
                     return model
                 estimator = KerasRegressor(build_fn=generate_kerasRregressor_model)                       
-            # do training
+   ## Conduct training
             history = estimator.fit(x_train, y_train, validation_data=(x_test,y_test), verbose=True)
             acc  = np.array(history.history['accuracy'])[0]
             loss = np.array(history.history['loss'])[0]
@@ -143,7 +134,7 @@ if __name__ == '__main__':
             estimator.model.save(keras_all_in_one_file)
             if save_every_coef_flag == 1:
                 print('Save the coef and val files to:')
-                # save coef
+   ## Save the coefficients of the  model
                 dirname = os.path.dirname(keras_all_in_one_file)
                 filename= os.path.basename(keras_all_in_one_file)
                 coef_dir = os.path.join(dirname, model_name+'_everycoefs')
@@ -153,7 +144,7 @@ if __name__ == '__main__':
                 filename= os.path.splitext(filename)[0]
                 coef_file = os.path.join(coef_dir, filename+'.'+score_str+'.h5')
                 copyfile(keras_all_in_one_file, coef_file)
-            # save the training accuracy results
+   ## save the training accuracy results
             print('updating the training result file ...')
             print(' ' + stat_file)
             if os.path.exists(stat_file):
@@ -169,16 +160,3 @@ if __name__ == '__main__':
             f= open(timer_file,"w+")
             f.write(str(tot_epochs))
             f.close()
-#}
-© 2022 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
