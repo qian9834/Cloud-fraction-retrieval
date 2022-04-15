@@ -161,43 +161,31 @@ This program build DNN model using CRIS spectrum and VIIRS cloud data to retriev
 # 2. cris_cloud_fraction_dnn_prediction.py
 This program produce cloud fraction retrieval results using previously built DNN model.
 ## Import common libs
-import os, sys
-import numpy as np
-import h5py
-from scipy import io as scipyIO
-from netCDF4 import Dataset
+    import os, sys
+    import numpy as np
+    import h5py
+    from scipy import io as scipyIO
+    from netCDF4 import Dataset
 ## Import keras libs
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.models import model_from_json, load_model
-from keras.utils import np_utils
-from keras.wrappers.scikit_learn import KerasClassifier
-from keras.wrappers.scikit_learn import KerasRegressor
-from keras.callbacks import ModelCheckpoint
-# Custom activation function
-from keras.layers import Activation
-from keras import backend as K
-from keras.utils.generic_utils import get_custom_objects
-import tensorflow as tf
-# Import sklearn libs
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-from shutil import copyfile
-import matplotlib.pyplot as plt
+    from keras.models import Sequential
+    from keras.layers import Dense
+    from keras.models import model_from_json, load_model
+    from keras.utils import np_utils
+    from keras.wrappers.scikit_learn import KerasClassifier
+    from keras.wrappers.scikit_learn import KerasRegressor
+    from keras.callbacks import ModelCheckpoint
+## Custom activation function
+    from keras.layers import Activation
+    from keras import backend as K
+    from keras.utils.generic_utils import get_custom_objects
+    import tensorflow as tf
+## Import sklearn libs
+    from sklearn.model_selection import train_test_split
+    from sklearn.preprocessing import LabelEncoder
+    from shutil import copyfile
+    import matplotlib.pyplot as plt
 
-def custom_activation(x):
-    return tf.minimum(tf.maximum(x, 0.0), 1.0)
-class ReLU01(Activation):
-    def __init__(self, activation, **kwargs):
-        super(ReLU01, self).__init__(activation, **kwargs)
-        self.__name__ = 'relu01'
-def relu01(x):
-    # Your activation function specialties here
-    return tf.minimum(tf.maximum(x, 0.0), 1.0)
-## main functions
-if __name__ == '__main__':
-    get_custom_objects().update({'relu01': ReLU01(relu01)})
-    # input from the command line
+## Define input data path and output path
     data_file    = './test_data/cris_viirs_cloudfrac_input_20200601.sav'  # input file
     model_dir  = './cloudfrac'         # model dir
     model_name  = 'cloudfrac'       # model name
