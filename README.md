@@ -3,48 +3,45 @@ This project contains two programs including one model training program: cris_cl
 # 1. cris_cloud_fraction_dnn_training.py:
 This program build DNN model using CRIS spectrum and VIIRS cloud data to retrieve the cloud fraction in each CrIS field of view
 ## The following codesimport common libs
-import os, sys
-import numpy as np
-import h5py
-from scipy import io as scipyIO
-from netCDF4 import Dataset
-from sklearn.metrics import mean_squared_error
-import scipy.stats as st
+    import os, sys
+    import numpy as np
+    import h5py
+    from scipy import io as scipyIO
+    from netCDF4 import Dataset
+    from sklearn.metrics import mean_squared_error
+    import scipy.stats as st
 ## Import keras libs
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import Dropout
-from keras.optimizers import Adam
-from keras.models import model_from_json, load_model
-from keras.utils import np_utils
-from keras.wrappers.scikit_learn import KerasClassifier
-from keras.wrappers.scikit_learn import KerasRegressor
-from keras.callbacks import ModelCheckpoint
+    from keras.models import Sequential
+    from keras.layers import Dense
+    from keras.layers import Dropout
+    from keras.optimizers import Adam
+    from keras.models import model_from_json, load_model
+    from keras.utils import np_utils
+    from keras.wrappers.scikit_learn import KerasClassifier
+    from keras.wrappers.scikit_learn import KerasRegressor
+    from keras.callbacks import ModelCheckpoint
 ## Custom activation function
-from keras.layers import Activation
-from keras import backend as K
-from keras.utils.generic_utils import get_custom_objects
-import tensorflow as tf
+    from keras.layers import Activation
+    from keras import backend as K
+    from keras.utils.generic_utils import get_custom_objects
+    import tensorflow as tf
 ## Import sklearn libs
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-from shutil import copyfile
-import matplotlib.pyplot as plt
+    from sklearn.model_selection import train_test_split
+    from sklearn.preprocessing import LabelEncoder
+    from shutil import copyfile
+    import matplotlib.pyplot as plt
 ## Define activation function
-def custom_activation(x):
-    return tf.minimum(tf.maximum(x, 0.0), 1.0)
-class ReLU01(Activation):
-    def __init__(self, activation, **kwargs):
-        super(ReLU01, self).__init__(activation, **kwargs)
-        self.__name__ = 'relu01'
-def relu01(x):
-    return tf.minimum(tf.maximum(x, 0.0), 1.0)
+    def custom_activation(x):
+        return tf.minimum(tf.maximum(x, 0.0), 1.0)
+    class ReLU01(Activation):
+        def __init__(self, activation, **kwargs):
+            super(ReLU01, self).__init__(activation, **kwargs)
+            self.__name__ = 'relu01'
+    def relu01(x):
+        return tf.minimum(tf.maximum(x, 0.0), 1.0)
 
 # 2. main functions
-if __name__ == '__main__':
-    
-    get_custom_objects().update({'relu01': ReLU01(relu01)})  
- ## Define input and output path
+ ## Define input data and output path. The test data is stored in cloudfrac_200PC_Training_ge4.sav, the first 200 columns are the top 200 principal components, and the column with tile 'cloudfrac' is the observed cloud fraction of VIIRS cloud mask.
     data_TRAINING_file = './cloudfrac_200PC_Training_ge4.sav' 
     model_name  = 'cloudfrac'
     output_dir = './cloudfrac/64_128_32'
@@ -69,9 +66,8 @@ if __name__ == '__main__':
         x_train = np.array(data['predictors'][:,0:npc]).astype(np.float)
         predictand_name = model_name
         y_train = np.array(data[predictand_name]).astype(np.float)
-   
 
-  ### code for training, evaluation and prediction are: Tranning=0, evaluating=1, predicting=2
+  ### Code for training, evaluation and prediction are: Tranning=0, evaluating=1, predicting=2
     
         keras_all_in_one_file = os.path.join(model_dir, model_name+ '_pc_' + str(npc) +'.h5') 
         seed = 6
