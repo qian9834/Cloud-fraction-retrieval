@@ -1,4 +1,4 @@
-# Introduction
+# 0. Introduction
 This project contains two programs including one model training program: cris_cloud_fraction_dnn_training.py, and one prediction program: cris_cloud_fraction_dnn_prediction.py. The detailed description of the two programs are as follows:
 # 1. cris_cloud_fraction_dnn_training.py:
 This program build DNN model using CRIS spectrum and VIIRS cloud data to retrieve the cloud fraction in each CrIS field of view
