@@ -131,7 +131,7 @@ This program build DNN model using CRIS spectrum and VIIRS cloud data to retriev
             estimator.model.save(keras_all_in_one_file)
             if save_every_coef_flag == 1:
                 print('Save the coef and val files to:')
-   ## Save the coefficients of the  model
+   ## Save the coefficients of the  model. There is a previously trained model coefficient saved in the "cloudfrac.h5" in this project, which is produced in this step.
                 dirname = os.path.dirname(keras_all_in_one_file)
                 filename= os.path.basename(keras_all_in_one_file)
                 coef_dir = os.path.join(dirname, model_name+'_everycoefs')
@@ -141,7 +141,7 @@ This program build DNN model using CRIS spectrum and VIIRS cloud data to retriev
                 filename= os.path.splitext(filename)[0]
                 coef_file = os.path.join(coef_dir, filename+'.'+score_str+'.h5')
                 copyfile(keras_all_in_one_file, coef_file)
-   ## save the training accuracy results
+   ## Save the training accuracy results
             print('updating the training result file ...')
             print(' ' + stat_file)
             if os.path.exists(stat_file):
@@ -185,18 +185,18 @@ This program produce cloud fraction retrieval results using previously built DNN
     from shutil import copyfile
     import matplotlib.pyplot as plt
 
-## Define input data path and output path
+## Define input data and model path and output path. The pre-trained model is "cloudfrac.h5" in this project folder.
     data_file    = './test_data/cris_viirs_cloudfrac_input_20200601.sav'  # input file
     model_dir  = './cloudfrac'         # model dir
     model_name  = 'cloudfrac'       # model name
     npc  = 77             # number of predictors
     output_file = './test_data/cris_viirs_cloudfrac_output_20200601.h5'   # output file
 
-## Prepare and load dataset
+## Prepare and load dataset from "predictors" variable of the sample data.
     data = scipyIO.readsav(data_file)
     predictors = np.array(data['predictors'][:,0:npc]).astype(np.float)
     predictand_name = model_name
-## Load DNN model
+## Load DNN model from "cloudfrac.h5"
     keras_all_in_one_file = os.path.join(model_dir, model_name+'.h5') 
     estimator = load_model(keras_all_in_one_file)
     predictions = np.squeeze(np.array(estimator.predict(predictors)))
