@@ -41,7 +41,7 @@ This program build DNN model using CRIS spectrum and VIIRS cloud data to retriev
         return tf.minimum(tf.maximum(x, 0.0), 1.0)
 
 # 2. main functions
- ## Define input data and output path. The test data is stored in cloudfrac_200PC_Training_ge4.sav, there are two variables in this .sav file:1. "predcitors" which contains 200 pricipal components serving as the model input predictors; 2. "cloudfrac" which VIIRS cloud fractions serving as model learning target.
+ ## Define input data and output path. The test data is stored in cloudfrac_200PC_Training_ge4.sav, there are two variables in this .sav file:1. "predcitors" which contains 200 pricipal components serving as the model input predictors; 2. "cloudfrac" which is VIIRS cloud fractions serving as model learning target.
     data_TRAINING_file = './cloudfrac_200PC_Training_ge4.sav' 
     model_name  = 'cloudfrac'
     output_dir = './cloudfrac/64_128_32'
