@@ -222,3 +222,15 @@ This program produce cloud fraction retrieval results using previously built DNN
     fid.create_dataset(model_name + '_p', data=predictions)
  ## close the nc file
     fid.close()
+ # Reference
+1.Liu, Q., Li, Y., Yu, M., Chiu, L.S., Hao, X., Duffy, D.Q. and Yang, C., 2019. Daytime rainy cloud detection and convective precipitation delineation based on a deep neural Network method using GOES-16 ABI images. Remote Sensing, 11(21), 2555.
+2.Liu, Q., Xu, H., Sha, D., Lee, T., Duffy, D.Q., Walter, J. and Yang, C., 2020. Hyperspectral Infrared Sounder Cloud Detection Using Deep Neural Network Model. IEEE Geoscience and Remote Sensing Letters. 19 (2022), 5500705
+3.Liu, Q., Chiu, L.S., Hao, X. and Yang, C., 2021. Spatiotemporal Trends and Variations of the Rainfall Amount, Intensity, and Frequency in TRMM Multi-satellite Precipitation Analysis (TMPA) Data. Remote Sensing, 13(22), 4629.
+![image](https://user-images.githubusercontent.com/39736687/184898244-a6f73c4b-8f78-4199-857d-57e796116b78.png)
+4. Xu, H., Chen, Y. and Wang, L., 2018. Cross-track infrared sounder spectral gap filling toward improving intercalibration uncertainties. IEEE Transactions on Geoscience and Remote Sensing, 57(1), 509-519.
+5. Yang, C., Yu, M., Li, Y., Hu, F., Jiang, Y., Liu, Q., Sha, D., Xu, M. and Gu, J., 2019. Big Earth data analytics: A survey. Big Earth Data, 3(2), 83-107.
+6. Zou, C.Z., Zhou, L., Lin, L., Sun, N., Chen, Y., Flynn, L.E., Zhang, B., Cao, C., Iturbide-Sanchez, F., Beck, T. and Yan, B., 2020. The reprocessed Suomi NPP satellite observations. Remote Sensing, 12(18), 2891. 
+
+![image](https://user-images.githubusercontent.com/39736687/184898391-3e713ecf-9bac-4204-94ff-618014675178.png)
+
+
